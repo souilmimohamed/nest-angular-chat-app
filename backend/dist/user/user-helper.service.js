@@ -6,15 +6,26 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppService = void 0;
+exports.UserHelperService = void 0;
 const common_1 = require("@nestjs/common");
-let AppService = class AppService {
-    getHello() {
-        return { title: 'Hello Angular!' };
+const rxjs_1 = require("rxjs");
+let UserHelperService = class UserHelperService {
+    createUserDtoToEntity(createUserDto) {
+        return (0, rxjs_1.of)({
+            email: createUserDto.email,
+            username: createUserDto.username,
+            password: createUserDto.password,
+        });
+    }
+    loginUserDtoToEntity(loginUserDto) {
+        return (0, rxjs_1.of)({
+            email: loginUserDto.email,
+            password: loginUserDto.password,
+        });
     }
 };
-exports.AppService = AppService;
-exports.AppService = AppService = __decorate([
+exports.UserHelperService = UserHelperService;
+exports.UserHelperService = UserHelperService = __decorate([
     (0, common_1.Injectable)()
-], AppService);
-//# sourceMappingURL=app.service.js.map
+], UserHelperService);
+//# sourceMappingURL=user-helper.service.js.map
