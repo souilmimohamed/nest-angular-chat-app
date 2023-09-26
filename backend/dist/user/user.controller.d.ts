@@ -5,11 +5,12 @@ import { UserHelperService } from './user-helper.service';
 import { User } from './models/user.interface';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoginUserDto } from './models/dto/login-user.dto';
+import { LoginReponse } from './models/login-response.interface';
 export declare class UserController {
     private userService;
     private userHelperService;
     constructor(userService: UserService, userHelperService: UserHelperService);
     create(createUserDto: CreateUserDto): Observable<User>;
     findAll(page?: number, limit?: number): Observable<Pagination<User>>;
-    login(loginUserDto: LoginUserDto): Observable<boolean>;
+    login(loginUserDto: LoginUserDto): Observable<LoginReponse>;
 }

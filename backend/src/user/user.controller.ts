@@ -1,11 +1,13 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Observable, of, switchMap } from 'rxjs';
+import { Observable, map, of, switchMap } from 'rxjs';
 import { CreateUserDto } from './models/dto/create-user.dto';
 import { UserHelperService } from './user-helper.service';
 import { User } from './models/user.interface';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoginUserDto } from './models/dto/login-user.dto';
+import { LoginReponse } from './models/login-response.interface';
+import { JwtGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('users')
 export class UserController {
@@ -21,6 +23,7 @@ export class UserController {
       .pipe(switchMap((user: User) => this.userService.create(user)));
   }
 
+  @UseGuards(JwtGuard)
   @Get()
   findAll(
     @Query('page') page: number = 1,
@@ -35,9 +38,19 @@ export class UserController {
   }
 
   @Post('login')
-  login(@Body() loginUserDto: LoginUserDto): Observable<boolean> {
-    return this.userHelperService
-      .loginUserDtoToEntity(loginUserDto)
-      .pipe(switchMap((user: User) => this.userService.login(user)));
+  login(@Body() loginUserDto: LoginUserDto): Observable<LoginReponse> {
+    return this.userHelperService.loginUserDtoToEntity(loginUserDto).pipe(
+      switchMap((user: User) =>
+        this.userService.login(user).pipe(
+          map((jwt: string) => {
+            return {
+              access_token: jwt,
+              token_type: 'JWT',
+              expires_in: 10000,
+            };
+          }),
+        ),
+      ),
+    );
   }
 }

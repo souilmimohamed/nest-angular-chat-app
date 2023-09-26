@@ -19,15 +19,17 @@ const user_entity_1 = require("./models/user.entity");
 const typeorm_2 = require("typeorm");
 const rxjs_1 = require("rxjs");
 const nestjs_typeorm_paginate_1 = require("nestjs-typeorm-paginate");
+const auth_service_1 = require("../auth/auth.service");
 const bcrypt = require('bcrypt');
 let UserService = class UserService {
-    constructor(userRepository) {
+    constructor(userRepository, authService) {
         this.userRepository = userRepository;
+        this.authService = authService;
     }
     create(newUser) {
         return this.emailExist(newUser.email).pipe((0, rxjs_1.switchMap)((exsist) => {
             if (!exsist) {
-                return this.hashPassword(newUser.password).pipe((0, rxjs_1.switchMap)((passwordHash) => {
+                return this.authService.hashPassword(newUser.password).pipe((0, rxjs_1.switchMap)((passwordHash) => {
                     newUser.password = passwordHash;
                     return (0, rxjs_1.from)(this.userRepository.save(newUser)).pipe((0, rxjs_1.switchMap)((user) => this.findOne(user.id)));
                 }));
@@ -42,9 +44,11 @@ let UserService = class UserService {
     login(user) {
         return this.findByEmail(user.email).pipe((0, rxjs_1.switchMap)((foundUser) => {
             if (foundUser) {
-                return this.validatePassword(user.password, foundUser.password).pipe((0, rxjs_1.switchMap)((matches) => {
+                return this.authService
+                    .validatePassword(user.password, foundUser.password)
+                    .pipe((0, rxjs_1.switchMap)((matches) => {
                     if (matches) {
-                        return this.findOne(foundUser.id).pipe((0, rxjs_1.mapTo)(true));
+                        return this.findOne(foundUser.id).pipe((0, rxjs_1.switchMap)((payload) => this.authService.generateJwt(payload)));
                     }
                     else
                         throw new common_1.HttpException('wrong credentials', common_1.HttpStatus.UNAUTHORIZED);
@@ -63,12 +67,6 @@ let UserService = class UserService {
                 return false;
         }));
     }
-    hashPassword(password) {
-        return (0, rxjs_1.from)(bcrypt.hash(password, 12));
-    }
-    validatePassword(password, storedPasswordHash) {
-        return (0, rxjs_1.from)(bcrypt.compare(password, storedPasswordHash));
-    }
     findOne(id) {
         return (0, rxjs_1.from)(this.userRepository.findOne({ where: { id } }));
     }
@@ -83,6 +81,7 @@ exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(user_entity_1.UserEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        auth_service_1.AuthService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map
