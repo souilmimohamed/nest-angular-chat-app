@@ -15,6 +15,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const user_module_1 = require("./user/user.module");
 const auth_module_1 = require("./auth/auth.module");
 const auth_middleware_1 = require("./middleware/auth.middleware");
+const chat_module_1 = require("./chat/chat.module");
 let AppModule = class AppModule {
     configure(consumer) {
         consumer
@@ -36,6 +37,7 @@ exports.AppModule = AppModule = __decorate([
             }),
             user_module_1.UserModule,
             auth_module_1.AuthModule,
+            chat_module_1.ChatModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

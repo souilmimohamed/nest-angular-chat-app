@@ -13,10 +13,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
 import { JwtModule } from '@auth0/angular-jwt';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
 }
+
 const MAT_MODULES = [
   MatSnackBarModule,
   MatCardModule,
