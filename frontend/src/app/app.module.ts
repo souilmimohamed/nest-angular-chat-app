@@ -12,10 +12,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './public/components/login/login.component';
-import { RegisterComponent } from './public/components/register/register.component';
-import { DashboardComponent } from './private/dashboard/dashboard.component';
+import { JwtModule } from '@auth0/angular-jwt';
 
+export function tokenGetter() {
+  return localStorage.getItem('token');
+}
 const MAT_MODULES = [
   MatSnackBarModule,
   MatCardModule,
@@ -26,13 +27,19 @@ const MAT_MODULES = [
 @NgModule({
   declarations: [AppComponent],
   imports: [
+    ...MAT_MODULES,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     CommonModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
-    ...MAT_MODULES,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:5000'],
+      },
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
