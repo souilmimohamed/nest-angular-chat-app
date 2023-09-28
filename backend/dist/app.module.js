@@ -14,7 +14,14 @@ const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const user_module_1 = require("./user/user.module");
 const auth_module_1 = require("./auth/auth.module");
+const auth_middleware_1 = require("./middleware/auth.middleware");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer
+            .apply(auth_middleware_1.AuthMiddleware)
+            .exclude({ path: '/users', method: common_1.RequestMethod.POST }, { path: '/users/login', method: common_1.RequestMethod.POST })
+            .forRoutes('');
+    }
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([

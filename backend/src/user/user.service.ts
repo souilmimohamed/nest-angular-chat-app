@@ -91,4 +91,8 @@ export class UserService {
       }),
     );
   }
+
+  public getOne(id: number): Promise<User> {
+    return this.userRepository.findOneByOrFail({ id });
+  }
 }

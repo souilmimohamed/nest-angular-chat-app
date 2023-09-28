@@ -7,4 +7,5 @@ export declare class AuthService {
     hashPassword(password: string): Observable<string>;
     validatePassword(password: string, storedPasswordHash: string): Observable<any>;
     generateJwt(user: User): Observable<string>;
+    verifyJwt(jwt: string): Promise<any>;
 }

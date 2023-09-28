@@ -19,7 +19,6 @@ const rxjs_1 = require("rxjs");
 const create_user_dto_1 = require("./models/dto/create-user.dto");
 const user_helper_service_1 = require("./user-helper.service");
 const login_user_dto_1 = require("./models/dto/login-user.dto");
-const jwt_guard_1 = require("../auth/guards/jwt.guard");
 let UserController = class UserController {
     constructor(userService, userHelperService) {
         this.userService = userService;
@@ -57,7 +56,6 @@ __decorate([
     __metadata("design:returntype", rxjs_1.Observable)
 ], UserController.prototype, "create", null);
 __decorate([
-    (0, common_1.UseGuards)(jwt_guard_1.JwtGuard),
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('page')),
     __param(1, (0, common_1.Query)('limit')),

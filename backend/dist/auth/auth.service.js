@@ -27,6 +27,9 @@ let AuthService = class AuthService {
     generateJwt(user) {
         return (0, rxjs_1.from)(this.jwtService.signAsync({ user }));
     }
+    verifyJwt(jwt) {
+        return this.jwtService.verifyAsync(jwt);
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([

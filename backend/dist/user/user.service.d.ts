@@ -14,4 +14,5 @@ export declare class UserService {
     private emailExist;
     private findOne;
     private findByEmail;
+    getOne(id: number): Promise<User>;
 }

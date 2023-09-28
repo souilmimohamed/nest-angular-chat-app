@@ -76,6 +76,9 @@ let UserService = class UserService {
             select: ['id', 'email', 'username', 'password'],
         }));
     }
+    getOne(id) {
+        return this.userRepository.findOneByOrFail({ id });
+    }
 };
 exports.UserService = UserService;
 exports.UserService = UserService = __decorate([
