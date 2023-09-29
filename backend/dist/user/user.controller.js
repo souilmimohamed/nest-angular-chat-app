@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
-const rxjs_1 = require("rxjs");
 const create_user_dto_1 = require("./models/dto/create-user.dto");
 const user_helper_service_1 = require("./user-helper.service");
 const login_user_dto_1 = require("./models/dto/login-user.dto");
@@ -24,12 +23,11 @@ let UserController = class UserController {
         this.userService = userService;
         this.userHelperService = userHelperService;
     }
-    create(createUserDto) {
-        return this.userHelperService
-            .createUserDtoToEntity(createUserDto)
-            .pipe((0, rxjs_1.switchMap)((user) => this.userService.create(user)));
+    async create(createUserDto) {
+        const userEntity = this.userHelperService.createUserDtoToEntity(createUserDto);
+        return this.userService.create(userEntity);
     }
-    findAll(page = 1, limit = 10) {
+    async findAll(page = 1, limit = 10) {
         limit = limit > 100 ? 100 : limit;
         return this.userService.findAll({
             page,
@@ -37,14 +35,17 @@ let UserController = class UserController {
             route: 'localhost:5000/users',
         });
     }
-    login(loginUserDto) {
-        return this.userHelperService.loginUserDtoToEntity(loginUserDto).pipe((0, rxjs_1.switchMap)((user) => this.userService.login(user).pipe((0, rxjs_1.map)((jwt) => {
-            return {
-                access_token: jwt,
-                token_type: 'JWT',
-                expires_in: 10000,
-            };
-        }))));
+    async login(loginUserDto) {
+        const userEntity = this.userHelperService.loginUserDtoToEntity(loginUserDto);
+        const jwt = await this.userService.login(userEntity);
+        return {
+            access_token: jwt,
+            expires_in: 10000,
+            token_type: 'JWT',
+        };
+    }
+    async fidAllByUsername(usernane) {
+        return this.userService.findAllByUsername(usernane);
     }
 };
 exports.UserController = UserController;
@@ -53,7 +54,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
-    __metadata("design:returntype", rxjs_1.Observable)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
@@ -61,15 +62,22 @@ __decorate([
     __param(1, (0, common_1.Query)('limit')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number]),
-    __metadata("design:returntype", rxjs_1.Observable)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Post)('login'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_user_dto_1.LoginUserDto]),
-    __metadata("design:returntype", rxjs_1.Observable)
+    __metadata("design:returntype", Promise)
 ], UserController.prototype, "login", null);
+__decorate([
+    (0, common_1.Get)('/find-by-username'),
+    __param(0, (0, common_1.Query)('username')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "fidAllByUsername", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [user_service_1.UserService,

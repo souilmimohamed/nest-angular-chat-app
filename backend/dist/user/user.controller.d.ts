@@ -1,5 +1,4 @@
 import { UserService } from './user.service';
-import { Observable } from 'rxjs';
 import { CreateUserDto } from './models/dto/create-user.dto';
 import { UserHelperService } from './user-helper.service';
 import { User } from './models/user.interface';
@@ -10,7 +9,8 @@ export declare class UserController {
     private userService;
     private userHelperService;
     constructor(userService: UserService, userHelperService: UserHelperService);
-    create(createUserDto: CreateUserDto): Observable<User>;
-    findAll(page?: number, limit?: number): Observable<Pagination<User>>;
-    login(loginUserDto: LoginUserDto): Observable<LoginReponse>;
+    create(createUserDto: CreateUserDto): Promise<User>;
+    findAll(page?: number, limit?: number): Promise<Pagination<User>>;
+    login(loginUserDto: LoginUserDto): Promise<LoginReponse>;
+    fidAllByUsername(usernane: string): Promise<User[]>;
 }

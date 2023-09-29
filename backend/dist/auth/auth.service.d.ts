@@ -1,11 +1,10 @@
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { User } from 'src/user/models/user.interface';
 export declare class AuthService {
     private jwtService;
     constructor(jwtService: JwtService);
-    hashPassword(password: string): Observable<string>;
-    validatePassword(password: string, storedPasswordHash: string): Observable<any>;
-    generateJwt(user: User): Observable<string>;
+    hashPassword(password: string): Promise<string>;
+    comparePasswords(password: string, storedPasswordHash: string): Promise<any>;
+    generateJwt(user: User): Promise<string>;
     verifyJwt(jwt: string): Promise<any>;
 }
