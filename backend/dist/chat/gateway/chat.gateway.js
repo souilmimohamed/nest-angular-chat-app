@@ -15,11 +15,12 @@ const websockets_1 = require("@nestjs/websockets");
 const socket_io_1 = require("socket.io");
 const auth_service_1 = require("../../auth/auth.service");
 const user_service_1 = require("../../user/user.service");
+const room_service_1 = require("../services/room.service");
 let ChatGateway = class ChatGateway {
-    constructor(authService, userService) {
+    constructor(authService, userService, roomService) {
         this.authService = authService;
         this.userService = userService;
-        this.title = [];
+        this.roomService = roomService;
     }
     async handleConnection(socket) {
         try {
@@ -29,8 +30,12 @@ let ChatGateway = class ChatGateway {
                 return this.disconnect(socket);
             }
             else {
-                this.title.push('Value ' + Math.random().toString());
-                this.server.emit('message', this.title);
+                socket.data.user = user;
+                const rooms = await this.roomService.getRoomsForUser(user.id, {
+                    page: 1,
+                    limit: 10,
+                });
+                return this.server.to(socket.id).emit('rooms', rooms);
             }
         }
         catch (error) {
@@ -44,6 +49,9 @@ let ChatGateway = class ChatGateway {
         socket.emit('Error', new common_1.UnauthorizedException());
         socket.disconnect();
     }
+    async onCreateRoom(socket, room) {
+        return this.roomService.createRoom(room, socket.data.user);
+    }
 };
 exports.ChatGateway = ChatGateway;
 __decorate([
@@ -56,6 +64,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "handleConnection", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('createRoom'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "onCreateRoom", null);
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
@@ -67,6 +81,7 @@ exports.ChatGateway = ChatGateway = __decorate([
         },
     }),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
-        user_service_1.UserService])
+        user_service_1.UserService,
+        room_service_1.RoomService])
 ], ChatGateway);
 //# sourceMappingURL=chat.gateway.js.map

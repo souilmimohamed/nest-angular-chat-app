@@ -6,7 +6,10 @@ import { ChatService } from '../services/chat.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
-export class DashboardComponent {
-  title = this.chatService.getMessage();
+export class DashboardComponent implements OnInit {
+  rooms$ = this.chatService.getMyRooms();
   constructor(private chatService: ChatService) {}
+  ngOnInit(): void {
+    this.chatService.createRoom();
+  }
 }

@@ -9,42 +9,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserEntity = void 0;
-const room_entity_1 = require("../../chat/models/room.entity");
+exports.RoomEntity = void 0;
+const user_entity_1 = require("../../user/models/user.entity");
 const typeorm_1 = require("typeorm");
-let UserEntity = class UserEntity {
-    emailToLowerCase() {
-        this.email = this.email?.toLowerCase();
-    }
+let RoomEntity = class RoomEntity {
 };
-exports.UserEntity = UserEntity;
+exports.RoomEntity = RoomEntity;
 __decorate([
     (0, typeorm_1.PrimaryGeneratedColumn)(),
     __metadata("design:type", Number)
-], UserEntity.prototype, "id", void 0);
+], RoomEntity.prototype, "id", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], UserEntity.prototype, "username", void 0);
+], RoomEntity.prototype, "name", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
-], UserEntity.prototype, "email", void 0);
+], RoomEntity.prototype, "description", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ select: false }),
-    __metadata("design:type", String)
-], UserEntity.prototype, "password", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => room_entity_1.RoomEntity, (room) => room.users),
+    (0, typeorm_1.ManyToMany)(() => user_entity_1.UserEntity),
+    (0, typeorm_1.JoinTable)(),
     __metadata("design:type", Array)
-], UserEntity.prototype, "rooms", void 0);
+], RoomEntity.prototype, "users", void 0);
 __decorate([
-    (0, typeorm_1.BeforeInsert)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UserEntity.prototype, "emailToLowerCase", null);
-exports.UserEntity = UserEntity = __decorate([
+    (0, typeorm_1.CreateDateColumn)(),
+    __metadata("design:type", Date)
+], RoomEntity.prototype, "created_at", void 0);
+__decorate([
+    (0, typeorm_1.UpdateDateColumn)(),
+    __metadata("design:type", Date)
+], RoomEntity.prototype, "updated_at", void 0);
+exports.RoomEntity = RoomEntity = __decorate([
     (0, typeorm_1.Entity)()
-], UserEntity);
-//# sourceMappingURL=user.entity.js.map
+], RoomEntity);
+//# sourceMappingURL=room.entity.js.map

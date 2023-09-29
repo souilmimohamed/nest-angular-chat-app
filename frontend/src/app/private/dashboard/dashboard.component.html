@@ -1,2 +1,6 @@
 <p>dashboard works!</p>
-{{ title | async }}
+<mat-list>
+  <mat-list-item *ngFor="let room of (rooms$ | async)?.items" [value]="room">
+    Name:{{ room.name }} Id:{{ room.id }}
+  </mat-list-item>
+</mat-list>
