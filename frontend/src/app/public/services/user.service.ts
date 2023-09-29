@@ -37,4 +37,10 @@ export class UserService {
       })
     );
   }
+
+  findByUsername(username: string): Observable<User[]> {
+    return this.http.get<User[]>(
+      `api/users/find-by-username?username=${username}`
+    );
+  }
 }
