@@ -35,6 +35,7 @@ let ChatGateway = class ChatGateway {
                     page: 1,
                     limit: 10,
                 });
+                rooms.meta.currentPage = rooms.meta.currentPage - 1;
                 return this.server.to(socket.id).emit('rooms', rooms);
             }
         }
@@ -51,6 +52,16 @@ let ChatGateway = class ChatGateway {
     }
     async onCreateRoom(socket, room) {
         return this.roomService.createRoom(room, socket.data.user);
+    }
+    async onPaginateRoom(socket, page) {
+        const rooms = await this.roomService.getRoomsForUser(socket.data.user.id, this.handleIncomingPageRequest(page));
+        rooms.meta.currentPage = rooms.meta.currentPage - 1;
+        return this.server.to(socket.id).emit('rooms', rooms);
+    }
+    handleIncomingPageRequest(page) {
+        page.limit = page.limit > 100 ? 100 : page.limit;
+        page.page = page.page + 1;
+        return page;
     }
 };
 exports.ChatGateway = ChatGateway;
@@ -70,6 +81,12 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "onCreateRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('paginateRooms'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "onPaginateRoom", null);
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CustomSocket } from 'src/app/socket/custom-socket';
-import { RommPaginate, Room } from '../models/room.interface';
+import { RoomPaginate, Room } from '../models/room.interface';
 import { User } from 'src/app/models/user.interface';
 
 @Injectable({
@@ -16,18 +16,14 @@ export class ChatService {
   }
 
   getMyRooms() {
-    return this.socket.fromEvent<RommPaginate>('rooms');
+    return this.socket.fromEvent<RoomPaginate>('rooms');
+  }
+
+  emitPaginatRooms(limit: number, page: number) {
+    this.socket.emit('paginateRooms', { limit, page });
   }
 
   createRoom() {
-    const user2: User = {
-      id: 2,
-    };
-    const room: Room = {
-      name: 'testRoom',
-      users: [user2],
-    };
-
-    this.socket.emit('createRoom', room);
+    //this.socket.emit('createRoom', room);
   }
 }
