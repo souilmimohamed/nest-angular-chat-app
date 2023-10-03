@@ -1,7 +1,6 @@
-import { RoomEntity } from '../models/room.entity';
+import { RoomEntity, Room } from '../models';
 import { Repository } from 'typeorm';
-import { Room } from '../models/room.interface';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 export declare class RoomService {
     private readonly roomRepository;
@@ -9,4 +8,5 @@ export declare class RoomService {
     createRoom(room: Room, creator: User): Promise<Room>;
     getRoomsForUser(userId: number, options: IPaginationOptions): Promise<Pagination<Room>>;
     addCreatorToRoom(room: Room, creator: User): Promise<Room>;
+    getRoom(roomId: number): Promise<Room>;
 }

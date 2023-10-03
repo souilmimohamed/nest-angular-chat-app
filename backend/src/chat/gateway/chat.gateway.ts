@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -8,13 +8,13 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models/interfaces/user.interface';
 import { UserService } from 'src/user/user.service';
 import { RoomService } from '../services/room.service';
-import { Room } from '../models/room.interface';
-import { Page } from '../models/page.interface';
+import { Room, Page, ConnectUser, Message, JoinedRoom } from '../models';
 import { ConnectedUserService } from '../services/connected-user.service';
-import { ConnectUser } from '../models/conneted-user.interface';
+import { JoinedRoomService } from '../services/joined-room.service';
+import { MessageService } from '../services/message.service';
 
 @WebSocketGateway({
   cors: {
@@ -25,7 +25,9 @@ import { ConnectUser } from '../models/conneted-user.interface';
     ],
   },
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit
+{
   @WebSocketServer()
   server: Server;
   constructor(
@@ -33,7 +35,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private userService: UserService,
     private roomService: RoomService,
     private connectedUserService: ConnectedUserService,
+    private joinedRoomService: JoinedRoomService,
+    private messageService: MessageService,
   ) {}
+
+  async onModuleInit() {
+    await this.connectedUserService.deleteAll();
+    await this.joinedRoomService.deleteAll();
+  }
 
   @SubscribeMessage('message')
   async handleConnection(socket: Socket) {
@@ -84,6 +93,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         page: 1,
         limit: 10,
       });
+      rooms.meta.currentPage = rooms.meta.currentPage - 1;
       for (const connection of connections) {
         await this.server.to(connection.socketId).emit('rooms', rooms);
       }
@@ -101,6 +111,38 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     return this.server.to(socket.id).emit('rooms', rooms);
   }
 
+  @SubscribeMessage('joinRoom')
+  async onJoinRoom(socket: Socket, room: Room) {
+    const messages = await this.messageService.findMessagesForRooms(room, {
+      page: 1,
+      limit: 10,
+    });
+    messages.meta.currentPage = messages.meta.currentPage - 1;
+    //save connection to room
+    await this.joinedRoomService.create({
+      socketId: socket.id,
+      user: socket.data.user,
+      room,
+    });
+    //send last messages from room to user
+    await this.server.to(socket.id).emit('messages', messages);
+  }
+  @SubscribeMessage('leaveRoom')
+  async onLeaveRoom(socket: Socket) {
+    //remove connection from joined room
+    this.joinedRoomService.deleteBySocketId(socket.id);
+  }
+
+  @SubscribeMessage('addMessage')
+  async onAddMessage(socket: Socket, message: Message) {
+    const createdMessage: Message = await this.messageService.create({
+      ...message,
+      user: socket.data.user,
+    });
+    const room: Room = await this.roomService.getRoom(createdMessage.room.id);
+    const joinedUser: JoinedRoom[] =
+      await this.joinedRoomService.findByRoom(room);
+  }
   private handleIncomingPageRequest(page: Page) {
     page.limit = page.limit > 100 ? 100 : page.limit;
     // add page +1 to match angular material paginator

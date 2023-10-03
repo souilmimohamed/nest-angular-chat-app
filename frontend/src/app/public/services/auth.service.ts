@@ -3,8 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginReponse } from 'src/app/models/login-response.interface';
-import { User } from 'src/app/models/user.interface';
+import { LoginReponse, User } from 'src/app/models';
 
 @Injectable({
   providedIn: 'root',

@@ -1,5 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models/interfaces/user.interface';
 export declare class AuthService {
     private jwtService;
     constructor(jwtService: JwtService);

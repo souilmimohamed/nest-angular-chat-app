@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { RoomEntity } from '../models/room.entity';
+import { RoomEntity, Room } from '../models';
 import { Repository } from 'typeorm';
-import { Room } from '../models/room.interface';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models';
 import {
   IPaginationOptions,
   Pagination,
@@ -39,5 +38,12 @@ export class RoomService {
   async addCreatorToRoom(room: Room, creator: User): Promise<Room> {
     room.users.push(creator);
     return room;
+  }
+
+  async getRoom(roomId: number): Promise<Room> {
+    return this.roomRepository.findOne({
+      where: { id: roomId },
+      relations: ['users'],
+    });
   }
 }

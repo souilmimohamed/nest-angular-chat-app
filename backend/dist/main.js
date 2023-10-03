@@ -9,7 +9,7 @@ async function bootstrap() {
     app.setGlobalPrefix('api');
     app.useGlobalPipes(new common_1.ValidationPipe());
     const config = new swagger_1.DocumentBuilder()
-        .setTitle('nest-chatapp-backend')
+        .setTitle('nest-chat-app-backend')
         .setDescription('nest backend for chat app')
         .setVersion('1.0')
         .addBearerAuth({ in: 'header', type: 'http' })

@@ -1,11 +1,8 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './models/dto/create-user.dto';
 import { UserHelperService } from './user-helper.service';
-import { User } from './models/user.interface';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { LoginUserDto } from './models/dto/login-user.dto';
-import { LoginReponse } from './models/login-response.interface';
+import { LoginUserDto, LoginReponse, CreateUserDto, User } from './models';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Users')

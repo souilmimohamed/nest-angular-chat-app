@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ConnectedUserEntity } from '../models/connected-user.entity';
+import { ConnectedUserEntity, ConnectUser } from '../models';
 import { Repository } from 'typeorm';
-import { ConnectUser } from '../models/conneted-user.interface';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models';
 
 @Injectable()
 export class ConnectedUserService {
@@ -22,5 +21,9 @@ export class ConnectedUserService {
 
   async deleteBySocketId(socketId: string) {
     this.connectedUserRepository.delete({ socketId });
+  }
+
+  async deleteAll() {
+    await this.connectedUserRepository.createQueryBuilder().delete().execute();
   }
 }

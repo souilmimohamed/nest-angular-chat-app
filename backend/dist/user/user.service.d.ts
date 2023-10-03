@@ -1,6 +1,5 @@
-import { UserEntity } from './models/user.entity';
+import { UserEntity, User } from './models';
 import { Repository } from 'typeorm';
-import { User } from './models/user.interface';
 import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { AuthService } from 'src/auth/auth.service';
 export declare class UserService {

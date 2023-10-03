@@ -17,12 +17,20 @@ const auth_service_1 = require("../../auth/auth.service");
 const user_service_1 = require("../../user/user.service");
 const room_service_1 = require("../services/room.service");
 const connected_user_service_1 = require("../services/connected-user.service");
+const joined_room_service_1 = require("../services/joined-room.service");
+const message_service_1 = require("../services/message.service");
 let ChatGateway = class ChatGateway {
-    constructor(authService, userService, roomService, connectedUserService) {
+    constructor(authService, userService, roomService, connectedUserService, joinedRoomService, messageService) {
         this.authService = authService;
         this.userService = userService;
         this.roomService = roomService;
         this.connectedUserService = connectedUserService;
+        this.joinedRoomService = joinedRoomService;
+        this.messageService = messageService;
+    }
+    async onModuleInit() {
+        await this.connectedUserService.deleteAll();
+        await this.joinedRoomService.deleteAll();
     }
     async handleConnection(socket) {
         try {
@@ -62,6 +70,7 @@ let ChatGateway = class ChatGateway {
                 page: 1,
                 limit: 10,
             });
+            rooms.meta.currentPage = rooms.meta.currentPage - 1;
             for (const connection of connections) {
                 await this.server.to(connection.socketId).emit('rooms', rooms);
             }
@@ -71,6 +80,30 @@ let ChatGateway = class ChatGateway {
         const rooms = await this.roomService.getRoomsForUser(socket.data.user.id, this.handleIncomingPageRequest(page));
         rooms.meta.currentPage = rooms.meta.currentPage - 1;
         return this.server.to(socket.id).emit('rooms', rooms);
+    }
+    async onJoinRoom(socket, room) {
+        const messages = await this.messageService.findMessagesForRooms(room, {
+            page: 1,
+            limit: 10,
+        });
+        messages.meta.currentPage = messages.meta.currentPage - 1;
+        await this.joinedRoomService.create({
+            socketId: socket.id,
+            user: socket.data.user,
+            room,
+        });
+        await this.server.to(socket.id).emit('messages', messages);
+    }
+    async onLeaveRoom(socket) {
+        this.joinedRoomService.deleteBySocketId(socket.id);
+    }
+    async onAddMessage(socket, message) {
+        const createdMessage = await this.messageService.create({
+            ...message,
+            user: socket.data.user,
+        });
+        const room = await this.roomService.getRoom(createdMessage.room.id);
+        const joinedUser = await this.joinedRoomService.findByRoom(room);
     }
     handleIncomingPageRequest(page) {
         page.limit = page.limit > 100 ? 100 : page.limit;
@@ -101,6 +134,24 @@ __decorate([
     __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
     __metadata("design:returntype", Promise)
 ], ChatGateway.prototype, "onPaginateRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('joinRoom'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "onJoinRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('leaveRoom'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "onLeaveRoom", null);
+__decorate([
+    (0, websockets_1.SubscribeMessage)('addMessage'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [socket_io_1.Socket, Object]),
+    __metadata("design:returntype", Promise)
+], ChatGateway.prototype, "onAddMessage", null);
 exports.ChatGateway = ChatGateway = __decorate([
     (0, websockets_1.WebSocketGateway)({
         cors: {
@@ -114,6 +165,8 @@ exports.ChatGateway = ChatGateway = __decorate([
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         user_service_1.UserService,
         room_service_1.RoomService,
-        connected_user_service_1.ConnectedUserService])
+        connected_user_service_1.ConnectedUserService,
+        joined_room_service_1.JoinedRoomService,
+        message_service_1.MessageService])
 ], ChatGateway);
 //# sourceMappingURL=chat.gateway.js.map

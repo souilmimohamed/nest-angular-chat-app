@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RoomService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const room_entity_1 = require("../models/room.entity");
+const models_1 = require("../models");
 const typeorm_2 = require("typeorm");
 const nestjs_typeorm_paginate_1 = require("nestjs-typeorm-paginate");
 let RoomService = class RoomService {
@@ -39,11 +39,17 @@ let RoomService = class RoomService {
         room.users.push(creator);
         return room;
     }
+    async getRoom(roomId) {
+        return this.roomRepository.findOne({
+            where: { id: roomId },
+            relations: ['users'],
+        });
+    }
 };
 exports.RoomService = RoomService;
 exports.RoomService = RoomService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(room_entity_1.RoomEntity)),
+    __param(0, (0, typeorm_1.InjectRepository)(models_1.RoomEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], RoomService);
 //# sourceMappingURL=room.service.js.map

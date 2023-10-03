@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CustomSocket } from 'src/app/socket/custom-socket';
-import { RoomPaginate, Room } from '../models/room.interface';
-import { User } from 'src/app/models/user.interface';
+import { RoomPaginate, Room } from '../models';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 

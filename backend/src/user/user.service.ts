@@ -1,15 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity } from './models/user.entity';
+import { UserEntity, User } from './models';
 import { Like, Repository } from 'typeorm';
-import { User } from './models/user.interface';
 import {
   IPaginationOptions,
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { AuthService } from 'src/auth/auth.service';
-const bcrypt = require('bcrypt');
 
 @Injectable()
 export class UserService {

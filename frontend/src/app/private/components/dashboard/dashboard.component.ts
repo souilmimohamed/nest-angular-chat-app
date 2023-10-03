@@ -3,7 +3,7 @@ import { ChatService } from '../../services/chat.service';
 import { MatSelectionListChange } from '@angular/material/list';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
-import { RoomPaginate } from '../../models/room.interface';
+import { RoomPaginate } from '../../models';
 
 @Component({
   selector: 'app-dashboard',

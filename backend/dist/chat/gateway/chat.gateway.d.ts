@@ -1,22 +1,30 @@
+import { OnModuleInit } from '@nestjs/common';
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
 import { RoomService } from '../services/room.service';
-import { Room } from '../models/room.interface';
-import { Page } from '../models/page.interface';
+import { Room, Page, Message } from '../models';
 import { ConnectedUserService } from '../services/connected-user.service';
-export declare class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+import { JoinedRoomService } from '../services/joined-room.service';
+import { MessageService } from '../services/message.service';
+export declare class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit {
     private authService;
     private userService;
     private roomService;
     private connectedUserService;
+    private joinedRoomService;
+    private messageService;
     server: Server;
-    constructor(authService: AuthService, userService: UserService, roomService: RoomService, connectedUserService: ConnectedUserService);
+    constructor(authService: AuthService, userService: UserService, roomService: RoomService, connectedUserService: ConnectedUserService, joinedRoomService: JoinedRoomService, messageService: MessageService);
+    onModuleInit(): Promise<void>;
     handleConnection(socket: Socket): Promise<boolean | void>;
     handleDisconnect(socket: Socket): Promise<void>;
     private disconnect;
     onCreateRoom(socket: Socket, room: Room): Promise<void>;
     onPaginateRoom(socket: Socket, page: Page): Promise<boolean>;
+    onJoinRoom(socket: Socket, room: Room): Promise<void>;
+    onLeaveRoom(socket: Socket): Promise<void>;
+    onAddMessage(socket: Socket, message: Message): Promise<void>;
     private handleIncomingPageRequest;
 }

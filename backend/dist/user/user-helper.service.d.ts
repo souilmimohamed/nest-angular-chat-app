@@ -1,6 +1,4 @@
-import { CreateUserDto } from './models/dto/create-user.dto';
-import { User } from './models/user.interface';
-import { LoginUserDto } from './models/dto/login-user.dto';
+import { User, LoginUserDto, CreateUserDto } from './models';
 export declare class UserHelperService {
     createUserDtoToEntity(createUserDto: CreateUserDto): User;
     loginUserDtoToEntity(loginUserDto: LoginUserDto): User;

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/models/user.interface';
+import { User } from 'src/user/models/interfaces/user.interface';
 import { UserService } from 'src/user/user.service';
 
 export interface RequestModel extends Request {

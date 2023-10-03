@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ConnectedUserService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
-const connected_user_entity_1 = require("../models/connected-user.entity");
+const models_1 = require("../models");
 const typeorm_2 = require("typeorm");
 let ConnectedUserService = class ConnectedUserService {
     constructor(connectedUserRepository) {
@@ -30,11 +30,14 @@ let ConnectedUserService = class ConnectedUserService {
     async deleteBySocketId(socketId) {
         this.connectedUserRepository.delete({ socketId });
     }
+    async deleteAll() {
+        await this.connectedUserRepository.createQueryBuilder().delete().execute();
+    }
 };
 exports.ConnectedUserService = ConnectedUserService;
 exports.ConnectedUserService = ConnectedUserService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, typeorm_1.InjectRepository)(connected_user_entity_1.ConnectedUserEntity)),
+    __param(0, (0, typeorm_1.InjectRepository)(models_1.ConnectedUserEntity)),
     __metadata("design:paramtypes", [typeorm_2.Repository])
 ], ConnectedUserService);
 //# sourceMappingURL=connected-user.service.js.map
