@@ -23,9 +23,13 @@ export class MessageService {
     room: Room,
     options: IPaginationOptions,
   ): Promise<Pagination<Message>> {
-    return paginate(this.messageRepository, options, {
-      room,
-      relations: ['user', 'room'],
-    });
+    const query = this.messageRepository
+      .createQueryBuilder()
+      .leftJoin('message.room', 'room')
+      .where('room.id=:roomId', { roomId: room.id })
+      .leftJoinAndSelect('message.user', 'user')
+      .orderBy('message.created_at', 'ASC');
+
+    return paginate(query, options);
   }
 }

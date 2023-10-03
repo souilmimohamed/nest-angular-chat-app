@@ -26,10 +26,13 @@ let MessageService = class MessageService {
         return this.messageRepository.save(this.messageRepository.create(message));
     }
     async findMessagesForRooms(room, options) {
-        return (0, nestjs_typeorm_paginate_1.paginate)(this.messageRepository, options, {
-            room,
-            relations: ['user', 'room'],
-        });
+        const query = this.messageRepository
+            .createQueryBuilder()
+            .leftJoin('message.room', 'room')
+            .where('room.id=:roomId', { roomId: room.id })
+            .leftJoinAndSelect('message.user', 'user')
+            .orderBy('message.created_at', 'ASC');
+        return (0, nestjs_typeorm_paginate_1.paginate)(query, options);
     }
 };
 exports.MessageService = MessageService;

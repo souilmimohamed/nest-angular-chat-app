@@ -2,11 +2,17 @@
   <mat-card>
     <div style="display: flex; flex-direction: row">
       <div>
-        <h1>My Chat Rooms</h1>
-        <button mat-button [routerLink]="['../create-room']">
-          Create new room
-        </button>
-        <span *ngIf="(rooms$ | async).items.length > 0; else no_rooms">
+        <div>
+          <h2>My Chat Rooms</h2>
+          <button mat-button [routerLink]="['../create-room']">
+            Create new room
+          </button>
+        </div>
+
+        <div
+          *ngIf="(rooms$ | async)?.items?.length > 0; else no_rooms"
+          class="rooms"
+        >
           <mat-selection-list
             (selectionChange)="onSelectRoom($event)"
             [multiple]="false"
@@ -26,9 +32,9 @@
             (page)="onPaginateRooms($event)"
             [pageSizeOptions]="[10, 25, 50]"
           ></mat-paginator>
-        </span>
+        </div>
       </div>
-      <div style="margin-left: 40px">
+      <div class="chat-room">
         <h1>My Rooms</h1>
         {{ selectedRoom | json }}
       </div>

@@ -15,17 +15,16 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   selectedRoom = null;
   constructor(private chatService: ChatService) {}
   ngOnInit(): void {
-    this.chatService.emitPaginatRooms(0, 10);
+    this.chatService.emitPaginatRooms(10, 0);
   }
   ngAfterViewInit(): void {
-    this.chatService.emitPaginatRooms(10, 0);
+    //this.chatService.emitPaginatRooms(10, 0);
   }
 
   onSelectRoom(event: MatSelectionListChange) {
     this.selectedRoom = event.source.selectedOptions.selected[0].value;
   }
   onPaginateRooms(event: PageEvent) {
-    console.log({ limit: event.pageSize, page: event.pageIndex });
     this.chatService.emitPaginatRooms(event.pageSize, event.pageIndex);
   }
 }
