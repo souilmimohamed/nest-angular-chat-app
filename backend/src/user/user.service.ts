@@ -49,7 +49,7 @@ export class UserService {
           foundUser.password,
         );
         if (matches) {
-          const payload: User = await this.findOne(user.id);
+          const payload: User = await this.findOne(foundUser.id);
           return this.authService.generateJwt(payload);
         } else throw new HttpException('user not found', HttpStatus.NOT_FOUND);
       } else throw new HttpException('user not found', HttpStatus.NOT_FOUND);

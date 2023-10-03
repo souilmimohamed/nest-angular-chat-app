@@ -14,13 +14,19 @@ const user_module_1 = require("../user/user.module");
 const typeorm_1 = require("@nestjs/typeorm");
 const room_entity_1 = require("./models/room.entity");
 const room_service_1 = require("./services/room.service");
+const connected_user_entity_1 = require("./models/connected-user.entity");
+const connected_user_service_1 = require("./services/connected-user.service");
 let ChatModule = class ChatModule {
 };
 exports.ChatModule = ChatModule;
 exports.ChatModule = ChatModule = __decorate([
     (0, common_1.Module)({
-        imports: [auth_module_1.AuthModule, user_module_1.UserModule, typeorm_1.TypeOrmModule.forFeature([room_entity_1.RoomEntity])],
-        providers: [chat_gateway_1.ChatGateway, room_service_1.RoomService],
+        imports: [
+            auth_module_1.AuthModule,
+            user_module_1.UserModule,
+            typeorm_1.TypeOrmModule.forFeature([room_entity_1.RoomEntity, connected_user_entity_1.ConnectedUserEntity]),
+        ],
+        providers: [chat_gateway_1.ChatGateway, room_service_1.RoomService, connected_user_service_1.ConnectedUserService],
     })
 ], ChatModule);
 //# sourceMappingURL=chat.module.js.map

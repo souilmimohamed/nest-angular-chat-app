@@ -16,11 +16,13 @@ const socket_io_1 = require("socket.io");
 const auth_service_1 = require("../../auth/auth.service");
 const user_service_1 = require("../../user/user.service");
 const room_service_1 = require("../services/room.service");
+const connected_user_service_1 = require("../services/connected-user.service");
 let ChatGateway = class ChatGateway {
-    constructor(authService, userService, roomService) {
+    constructor(authService, userService, roomService, connectedUserService) {
         this.authService = authService;
         this.userService = userService;
         this.roomService = roomService;
+        this.connectedUserService = connectedUserService;
     }
     async handleConnection(socket) {
         try {
@@ -35,6 +37,7 @@ let ChatGateway = class ChatGateway {
                     page: 1,
                     limit: 10,
                 });
+                await this.connectedUserService.create({ socketId: socket.id, user });
                 rooms.meta.currentPage = rooms.meta.currentPage - 1;
                 return this.server.to(socket.id).emit('rooms', rooms);
             }
@@ -43,7 +46,8 @@ let ChatGateway = class ChatGateway {
             return this.disconnect(socket);
         }
     }
-    handleDisconnect(socket) {
+    async handleDisconnect(socket) {
+        await this.connectedUserService.deleteBySocketId(socket.id);
         socket.disconnect();
     }
     disconnect(socket) {
@@ -51,7 +55,17 @@ let ChatGateway = class ChatGateway {
         socket.disconnect();
     }
     async onCreateRoom(socket, room) {
-        return this.roomService.createRoom(room, socket.data.user);
+        const createdRoom = await this.roomService.createRoom(room, socket.data.user);
+        for (const user of createdRoom.users) {
+            const connections = await this.connectedUserService.findByUser(user);
+            const rooms = await this.roomService.getRoomsForUser(user.id, {
+                page: 1,
+                limit: 10,
+            });
+            for (const connection of connections) {
+                await this.server.to(connection.socketId).emit('rooms', rooms);
+            }
+        }
     }
     async onPaginateRoom(socket, page) {
         const rooms = await this.roomService.getRoomsForUser(socket.data.user.id, this.handleIncomingPageRequest(page));
@@ -99,6 +113,7 @@ exports.ChatGateway = ChatGateway = __decorate([
     }),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         user_service_1.UserService,
-        room_service_1.RoomService])
+        room_service_1.RoomService,
+        connected_user_service_1.ConnectedUserService])
 ], ChatGateway);
 //# sourceMappingURL=chat.gateway.js.map

@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
   templateUrl: './create-room.component.html',
   styleUrls: ['./create-room.component.scss'],
 })
-export class CreateRoomComponent implements OnInit {
+export class CreateRoomComponent {
   form: FormGroup = new FormGroup({
     name: new FormControl(null, [Validators.required]),
     description: new FormControl(null),
@@ -20,8 +20,6 @@ export class CreateRoomComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {}
-
-  ngOnInit(): void {}
 
   get name(): FormControl {
     return this.form.get('name') as FormControl;

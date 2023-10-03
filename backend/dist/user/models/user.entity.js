@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserEntity = void 0;
+const connected_user_entity_1 = require("../../chat/models/connected-user.entity");
 const room_entity_1 = require("../../chat/models/room.entity");
 const typeorm_1 = require("typeorm");
 let UserEntity = class UserEntity {
@@ -39,6 +40,10 @@ __decorate([
     (0, typeorm_1.ManyToMany)(() => room_entity_1.RoomEntity, (room) => room.users),
     __metadata("design:type", Array)
 ], UserEntity.prototype, "rooms", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => connected_user_entity_1.ConnectedUserEntity, (connection) => connection.user),
+    __metadata("design:type", Array)
+], UserEntity.prototype, "connections", void 0);
 __decorate([
     (0, typeorm_1.BeforeInsert)(),
     (0, typeorm_1.BeforeUpdate)(),

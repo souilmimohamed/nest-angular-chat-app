@@ -13,6 +13,8 @@ import { UserService } from 'src/user/user.service';
 import { RoomService } from '../services/room.service';
 import { Room } from '../models/room.interface';
 import { Page } from '../models/page.interface';
+import { ConnectedUserService } from '../services/connected-user.service';
+import { ConnectUser } from '../models/conneted-user.interface';
 
 @WebSocketGateway({
   cors: {
@@ -30,6 +32,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private authService: AuthService,
     private userService: UserService,
     private roomService: RoomService,
+    private connectedUserService: ConnectedUserService,
   ) {}
 
   @SubscribeMessage('message')
@@ -47,6 +50,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
           page: 1,
           limit: 10,
         });
+
+        //save connection to database
+        await this.connectedUserService.create({ socketId: socket.id, user });
         rooms.meta.currentPage = rooms.meta.currentPage - 1;
         return this.server.to(socket.id).emit('rooms', rooms);
       }
@@ -54,7 +60,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return this.disconnect(socket);
     }
   }
-  handleDisconnect(socket: Socket) {
+  async handleDisconnect(socket: Socket) {
+    //remove connection from database
+    await this.connectedUserService.deleteBySocketId(socket.id);
     socket.disconnect();
   }
 
@@ -64,8 +72,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('createRoom')
-  async onCreateRoom(socket: Socket, room: Room): Promise<Room> {
-    return this.roomService.createRoom(room, socket.data.user);
+  async onCreateRoom(socket: Socket, room: Room) {
+    const createdRoom = await this.roomService.createRoom(
+      room,
+      socket.data.user,
+    );
+    for (const user of createdRoom.users) {
+      const connections: ConnectUser[] =
+        await this.connectedUserService.findByUser(user);
+      const rooms = await this.roomService.getRoomsForUser(user.id, {
+        page: 1,
+        limit: 10,
+      });
+      for (const connection of connections) {
+        await this.server.to(connection.socketId).emit('rooms', rooms);
+      }
+    }
   }
 
   @SubscribeMessage('paginateRooms')

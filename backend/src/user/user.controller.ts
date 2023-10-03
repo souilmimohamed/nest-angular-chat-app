@@ -6,14 +6,16 @@ import { User } from './models/user.interface';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { LoginUserDto } from './models/dto/login-user.dto';
 import { LoginReponse } from './models/login-response.interface';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
   constructor(
     private userService: UserService,
     private userHelperService: UserHelperService,
   ) {}
-
+  @ApiBody({ type: CreateUserDto })
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     const userEntity: User =

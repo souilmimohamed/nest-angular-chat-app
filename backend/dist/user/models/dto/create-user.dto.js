@@ -12,12 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
 const class_validator_1 = require("class-validator");
 const login_user_dto_1 = require("./login-user.dto");
+const swagger_1 = require("@nestjs/swagger");
 class CreateUserDto extends login_user_dto_1.LoginUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "username", void 0);
 //# sourceMappingURL=create-user.dto.js.map

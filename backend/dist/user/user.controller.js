@@ -18,6 +18,7 @@ const user_service_1 = require("./user.service");
 const create_user_dto_1 = require("./models/dto/create-user.dto");
 const user_helper_service_1 = require("./user-helper.service");
 const login_user_dto_1 = require("./models/dto/login-user.dto");
+const swagger_1 = require("@nestjs/swagger");
 let UserController = class UserController {
     constructor(userService, userHelperService) {
         this.userService = userService;
@@ -50,6 +51,7 @@ let UserController = class UserController {
 };
 exports.UserController = UserController;
 __decorate([
+    (0, swagger_1.ApiBody)({ type: create_user_dto_1.CreateUserDto }),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -79,6 +81,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "fidAllByUsername", null);
 exports.UserController = UserController = __decorate([
+    (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [user_service_1.UserService,
         user_helper_service_1.UserHelperService])

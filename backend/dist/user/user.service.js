@@ -51,7 +51,7 @@ let UserService = class UserService {
             if (foundUser) {
                 const matches = await this.validatePassword(user.password, foundUser.password);
                 if (matches) {
-                    const payload = await this.findOne(user.id);
+                    const payload = await this.findOne(foundUser.id);
                     return this.authService.generateJwt(payload);
                 }
                 else
