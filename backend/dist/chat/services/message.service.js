@@ -27,11 +27,11 @@ let MessageService = class MessageService {
     }
     async findMessagesForRooms(room, options) {
         const query = this.messageRepository
-            .createQueryBuilder()
+            .createQueryBuilder('message')
             .leftJoin('message.room', 'room')
-            .where('room.id=:roomId', { roomId: room.id })
+            .where('room.id = :roomId', { roomId: room.id })
             .leftJoinAndSelect('message.user', 'user')
-            .orderBy('message.created_at', 'ASC');
+            .orderBy('message.created_at', 'DESC');
         return (0, nestjs_typeorm_paginate_1.paginate)(query, options);
     }
 };

@@ -8,7 +8,6 @@
             Create new room
           </button>
         </div>
-
         <div
           *ngIf="(rooms$ | async)?.items?.length > 0; else no_rooms"
           class="rooms"
@@ -36,7 +35,7 @@
       </div>
       <div class="chat-room">
         <h1>My Rooms</h1>
-        {{ selectedRoom | json }}
+        <app-chat-room [chatRoom]="selectedRoom"></app-chat-room>
       </div>
     </div>
   </mat-card>

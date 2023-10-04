@@ -17,6 +17,7 @@ import { RoomEntity } from './room.entity';
 export class MessageEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
   text: string;
 
@@ -30,6 +31,7 @@ export class MessageEntity {
 
   @CreateDateColumn()
   created_at: Date;
+
   @UpdateDateColumn()
   updated_at: Date;
 }

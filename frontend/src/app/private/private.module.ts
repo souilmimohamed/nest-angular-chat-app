@@ -14,6 +14,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { SelectUsersComponent } from './components/select-users/select-users.component';
+import { ChatRoomComponent } from './components/chat-room/chat-room.component';
+import { ChatMessageComponent } from './components/chat-message/chat-message.component';
 
 const MAT_MODULES = [
   MatListModule,
@@ -28,7 +30,13 @@ const MAT_MODULES = [
   MatInputModule,
 ];
 @NgModule({
-  declarations: [DashboardComponent, CreateRoomComponent, SelectUsersComponent],
+  declarations: [
+    DashboardComponent,
+    CreateRoomComponent,
+    SelectUsersComponent,
+    ChatRoomComponent,
+    ChatMessageComponent,
+  ],
   imports: [
     CommonModule,
     PrivateRoutingModule,

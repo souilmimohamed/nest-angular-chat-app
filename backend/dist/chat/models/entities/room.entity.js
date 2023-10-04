@@ -29,6 +29,11 @@ __decorate([
     __metadata("design:type", String)
 ], RoomEntity.prototype, "description", void 0);
 __decorate([
+    (0, typeorm_1.ManyToMany)(() => models_1.UserEntity),
+    (0, typeorm_1.JoinTable)(),
+    __metadata("design:type", Array)
+], RoomEntity.prototype, "users", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => __1.JoinedRoomEntity, (joinedRoom) => joinedRoom.room),
     __metadata("design:type", Array)
 ], RoomEntity.prototype, "joinedUsers", void 0);
@@ -36,11 +41,6 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => __1.MessageEntity, (message) => message.room),
     __metadata("design:type", Array)
 ], RoomEntity.prototype, "messages", void 0);
-__decorate([
-    (0, typeorm_1.ManyToMany)(() => models_1.UserEntity),
-    (0, typeorm_1.JoinTable)(),
-    __metadata("design:type", Array)
-], RoomEntity.prototype, "users", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)
@@ -50,6 +50,7 @@ __decorate([
     __metadata("design:type", Date)
 ], RoomEntity.prototype, "updated_at", void 0);
 exports.RoomEntity = RoomEntity = __decorate([
+    (0, typeorm_1.Entity)(),
     (0, typeorm_1.Entity)()
 ], RoomEntity);
 //# sourceMappingURL=room.entity.js.map

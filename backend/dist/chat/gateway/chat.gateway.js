@@ -103,7 +103,10 @@ let ChatGateway = class ChatGateway {
             user: socket.data.user,
         });
         const room = await this.roomService.getRoom(createdMessage.room.id);
-        const joinedUser = await this.joinedRoomService.findByRoom(room);
+        const joinedUsers = await this.joinedRoomService.findByRoom(room);
+        for (const user of joinedUsers) {
+            await this.server.to(user.socketId).emit('messageAdded', createdMessage);
+        }
     }
     handleIncomingPageRequest(page) {
         page.limit = page.limit > 100 ? 100 : page.limit;

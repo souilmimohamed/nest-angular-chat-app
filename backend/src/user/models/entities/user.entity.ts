@@ -18,10 +18,13 @@ import {
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column({ unique: true })
   username: string;
+
   @Column({ unique: true })
   email: string;
+
   @Column({ select: false })
   password: string;
 
@@ -40,7 +43,7 @@ export class UserEntity {
   @BeforeInsert()
   @BeforeUpdate()
   emailToLowerCase() {
-    this.email = this.email?.toLowerCase();
-    this.username = this.username?.toLowerCase();
+    this.email = this.email.toLowerCase();
+    this.username = this.username.toLowerCase();
   }
 }

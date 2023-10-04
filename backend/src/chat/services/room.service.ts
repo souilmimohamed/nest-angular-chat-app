@@ -7,8 +7,8 @@ import {
   IPaginationOptions,
   Pagination,
   paginate,
+  paginateRawAndEntities,
 } from 'nestjs-typeorm-paginate';
-import { find } from 'rxjs';
 
 @Injectable()
 export class RoomService {
@@ -32,7 +32,6 @@ export class RoomService {
       .where('users.id = :userId', { userId })
       .leftJoinAndSelect('room.users', 'all_users')
       .orderBy('room.updated_at', 'DESC');
-    console.log({ options });
     return paginate<RoomEntity>(query, options);
   }
 

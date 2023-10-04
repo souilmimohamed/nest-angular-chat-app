@@ -15,8 +15,8 @@ const models_2 = require("../../../chat/models");
 const typeorm_1 = require("typeorm");
 let UserEntity = class UserEntity {
     emailToLowerCase() {
-        this.email = this.email?.toLowerCase();
-        this.username = this.username?.toLowerCase();
+        this.email = this.email.toLowerCase();
+        this.username = this.username.toLowerCase();
     }
 };
 exports.UserEntity = UserEntity;
