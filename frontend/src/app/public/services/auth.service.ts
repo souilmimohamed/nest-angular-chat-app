@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { JwtHelperService } from '@auth0/angular-jwt';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { LoginReponse, User } from 'src/app/models';
@@ -9,7 +10,11 @@ import { LoginReponse, User } from 'src/app/models';
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  constructor(
+    private http: HttpClient,
+    private snackBar: MatSnackBar,
+    private jwtService: JwtHelperService
+  ) {}
 
   login(user: User): Observable<LoginReponse> {
     return this.http.post<LoginReponse>('api/users/login', user).pipe(
@@ -24,5 +29,10 @@ export class AuthService {
         })
       )
     );
+  }
+
+  getLoggedInUser() {
+    const decodedToken = this.jwtService.decodeToken();
+    return decodedToken.user;
   }
 }

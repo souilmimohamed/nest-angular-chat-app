@@ -1,14 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Message } from 'src/app/models';
+import { Message, User } from 'src/app/models';
+import { AuthService } from 'src/app/public/services/auth.service';
 
 @Component({
   selector: 'app-chat-message',
   templateUrl: './chat-message.component.html',
   styleUrls: ['./chat-message.component.scss'],
 })
-export class ChatMessageComponent implements OnInit {
+export class ChatMessageComponent {
   @Input() message: Message;
-  constructor() {}
-
-  ngOnInit(): void {}
+  user: User = this.authService.getLoggedInUser();
+  constructor(private authService: AuthService) {}
 }

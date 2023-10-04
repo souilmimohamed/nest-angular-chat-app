@@ -4,6 +4,8 @@ import { MatSelectionListChange } from '@angular/material/list';
 import { PageEvent } from '@angular/material/paginator';
 import { Observable } from 'rxjs';
 import { RoomPaginate } from '../../models';
+import { AuthService } from 'src/app/public/services/auth.service';
+import { User } from 'src/app/models';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +15,11 @@ import { RoomPaginate } from '../../models';
 export class DashboardComponent implements OnInit, AfterViewInit {
   rooms$: Observable<RoomPaginate> = this.chatService.getMyRooms();
   selectedRoom = null;
-  constructor(private chatService: ChatService) {}
+  user: User = this.authService.getLoggedInUser();
+  constructor(
+    private chatService: ChatService,
+    private authService: AuthService
+  ) {}
   ngOnInit(): void {
     this.chatService.emitPaginatRooms(10, 0);
   }

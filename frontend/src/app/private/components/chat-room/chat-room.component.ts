@@ -11,6 +11,7 @@ import { Observable } from 'rxjs';
 import { MessagePaginate } from 'src/app/models';
 import { ChatService } from '../../services/chat.service';
 import { FormControl, Validators } from '@angular/forms';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-room',
@@ -19,7 +20,16 @@ import { FormControl, Validators } from '@angular/forms';
 })
 export class ChatRoomComponent implements OnInit, OnChanges, OnDestroy {
   @Input() chatRoom: Room;
-  messages$: Observable<MessagePaginate> = this.chatservice.getMessage();
+  messages$: Observable<MessagePaginate> = this.chatservice.getMessage().pipe(
+    map((messagePaginate: MessagePaginate) => {
+      const items = messagePaginate.items.sort(
+        (a, b) =>
+          new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()
+      );
+      messagePaginate.items = items;
+      return messagePaginate;
+    })
+  );
   chatMessage: FormControl = new FormControl(null, Validators.required);
   constructor(private chatservice: ChatService) {}
 
