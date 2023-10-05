@@ -28,7 +28,7 @@ let JoinedRoomService = class JoinedRoomService {
         return this.joinedRoomRepository.find({ where: { user } });
     }
     async findByRoom(room) {
-        return this.joinedRoomRepository.find({ where: { room } });
+        return this.joinedRoomRepository.find({ where: { room: { id: room.id } } });
     }
     async deleteBySocketId(socketId) {
         return this.joinedRoomRepository.delete({ socketId });

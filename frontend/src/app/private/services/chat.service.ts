@@ -11,7 +11,7 @@ import { Message, MessagePaginate } from 'src/app/models';
 export class ChatService {
   constructor(private socket: CustomSocket, private snackBar: MatSnackBar) {}
 
-  getMessage(): Observable<MessagePaginate> {
+  getMessages(): Observable<MessagePaginate> {
     return this.socket.fromEvent<MessagePaginate>('messages');
   }
 
@@ -42,5 +42,9 @@ export class ChatService {
 
   sendMessage(message: Message) {
     this.socket.emit('addMessage', message);
+  }
+
+  getAddedMessage(): Observable<Message> {
+    return this.socket.fromEvent<Message>('messageAdded');
   }
 }

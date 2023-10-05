@@ -20,7 +20,7 @@
       <span *ngFor="let user of chatRoom.users">{{ user.username }},</span>
     </span>
   </div>
-  <div class="messages">
+  <div class="messages" #messages>
     <span *ngFor="let message of (messages$ | async)?.items">
       <app-chat-message [message]="message"></app-chat-message>
     </span>
