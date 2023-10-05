@@ -17,7 +17,8 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const models_1 = require("../models");
 const typeorm_2 = require("typeorm");
-const nestjs_typeorm_paginate_1 = require("nestjs-typeorm-paginate");
+const Ipagnation_model_1 = require("../../shared/models/Ipagnation.model");
+const IpaginationMeta_model_1 = require("../../shared/models/IpaginationMeta.model");
 let RoomService = class RoomService {
     constructor(roomRepository) {
         this.roomRepository = roomRepository;
@@ -33,7 +34,15 @@ let RoomService = class RoomService {
             .where('users.id = :userId', { userId })
             .leftJoinAndSelect('room.users', 'all_users')
             .orderBy('room.updated_at', 'DESC');
-        return (0, nestjs_typeorm_paginate_1.paginate)(query, options);
+        console.log({ options });
+        const meta = new IpaginationMeta_model_1.Meta(await query.getCount(), await query
+            .skip(options.limit * options.page)
+            .take(options.limit)
+            .getCount(), options.limit, Math.ceil((await query.getCount()) / options.limit), options.page);
+        return new Ipagnation_model_1.IpaginationResponse(await query
+            .skip(options.limit * options.page)
+            .take(options.limit)
+            .getMany(), meta);
     }
     async addCreatorToRoom(room, creator) {
         room.users.push(creator);

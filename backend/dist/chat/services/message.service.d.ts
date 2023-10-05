@@ -1,9 +1,10 @@
 import { Message, MessageEntity, Room } from '../models';
 import { Repository } from 'typeorm';
-import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
+import { IpaginationResponse } from 'src/shared/models/Ipagnation.model';
+import { IpaginationRequest } from 'src/shared/models/IpaginationRequest.model';
 export declare class MessageService {
     private readonly messageRepository;
     constructor(messageRepository: Repository<MessageEntity>);
     create(message: Message): Promise<Message>;
-    findMessagesForRooms(room: Room, options: IPaginationOptions): Promise<Pagination<Message>>;
+    findMessagesForRooms(room: Room, options: IpaginationRequest): Promise<IpaginationResponse<Message>>;
 }

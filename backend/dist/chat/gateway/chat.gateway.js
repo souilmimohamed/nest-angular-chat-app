@@ -42,11 +42,10 @@ let ChatGateway = class ChatGateway {
             else {
                 socket.data.user = user;
                 const rooms = await this.roomService.getRoomsForUser(user.id, {
-                    page: 1,
+                    page: 0,
                     limit: 10,
                 });
                 await this.connectedUserService.create({ socketId: socket.id, user });
-                rooms.meta.currentPage = rooms.meta.currentPage - 1;
                 return this.server.to(socket.id).emit('rooms', rooms);
             }
         }
@@ -67,26 +66,23 @@ let ChatGateway = class ChatGateway {
         for (const user of createdRoom.users) {
             const connections = await this.connectedUserService.findByUser(user);
             const rooms = await this.roomService.getRoomsForUser(user.id, {
-                page: 1,
+                page: 0,
                 limit: 10,
             });
-            rooms.meta.currentPage = rooms.meta.currentPage - 1;
             for (const connection of connections) {
                 await this.server.to(connection.socketId).emit('rooms', rooms);
             }
         }
     }
     async onPaginateRoom(socket, page) {
-        const rooms = await this.roomService.getRoomsForUser(socket.data.user.id, this.handleIncomingPageRequest(page));
-        rooms.meta.currentPage = rooms.meta.currentPage - 1;
+        const rooms = await this.roomService.getRoomsForUser(socket.data.user.id, page);
         return this.server.to(socket.id).emit('rooms', rooms);
     }
     async onJoinRoom(socket, room) {
         const messages = await this.messageService.findMessagesForRooms(room, {
-            page: 1,
+            page: 0,
             limit: 10,
         });
-        messages.meta.currentPage = messages.meta.currentPage - 1;
         await this.joinedRoomService.create({
             socketId: socket.id,
             user: socket.data.user,

@@ -56,13 +56,13 @@ export class ChatGateway
       } else {
         socket.data.user = user;
         const rooms = await this.roomService.getRoomsForUser(user.id, {
-          page: 1,
+          page: 0,
           limit: 10,
         });
 
         //save connection to database
         await this.connectedUserService.create({ socketId: socket.id, user });
-        rooms.meta.currentPage = rooms.meta.currentPage - 1;
+        //rooms.meta.currentPage = rooms.meta.currentPage - 1;
         return this.server.to(socket.id).emit('rooms', rooms);
       }
     } catch (error) {
@@ -90,10 +90,10 @@ export class ChatGateway
       const connections: ConnectUser[] =
         await this.connectedUserService.findByUser(user);
       const rooms = await this.roomService.getRoomsForUser(user.id, {
-        page: 1,
+        page: 0,
         limit: 10,
       });
-      rooms.meta.currentPage = rooms.meta.currentPage - 1;
+      //rooms.meta.currentPage = rooms.meta.currentPage - 1;
       for (const connection of connections) {
         await this.server.to(connection.socketId).emit('rooms', rooms);
       }
@@ -104,20 +104,18 @@ export class ChatGateway
   async onPaginateRoom(socket: Socket, page: Page) {
     const rooms = await this.roomService.getRoomsForUser(
       socket.data.user.id,
-      this.handleIncomingPageRequest(page),
+      page,
     );
-    // substract page -1 to match the angular material paginator
-    rooms.meta.currentPage = rooms.meta.currentPage - 1;
     return this.server.to(socket.id).emit('rooms', rooms);
   }
 
   @SubscribeMessage('joinRoom')
   async onJoinRoom(socket: Socket, room: Room) {
     const messages = await this.messageService.findMessagesForRooms(room, {
-      page: 1,
+      page: 0,
       limit: 10,
     });
-    messages.meta.currentPage = messages.meta.currentPage - 1;
+    //messages.meta.currentPage = messages.meta.currentPage - 1;
     //save connection to room
     await this.joinedRoomService.create({
       socketId: socket.id,

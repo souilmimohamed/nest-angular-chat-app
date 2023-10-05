@@ -1,0 +1,1 @@
+{"version":3,"file":"IpaginationRequest.model.js","sourceRoot":"","sources":["../../../src/shared/models/IpaginationRequest.model.ts"],"names":[],"mappings":";;;AAAA,MAAa,kBAAkB;IAG7B,YAAY,IAAY,EAAE,KAAa;QACrC,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,KAAK,GAAG,KAAK,CAAC;IACrB,CAAC;CACF;AAPD,gDAOC"}
