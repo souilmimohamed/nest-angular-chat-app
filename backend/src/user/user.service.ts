@@ -8,6 +8,9 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { AuthService } from 'src/auth/auth.service';
+import { IpaginationRequest } from 'src/shared/models/IpaginationRequest.model';
+import { IpaginationResponse } from 'src/shared/models/Ipagnation.model';
+import { Meta } from 'src/shared/models/IpaginationMeta.model';
 
 @Injectable()
 export class UserService {
@@ -34,8 +37,24 @@ export class UserService {
       throw new HttpException('Email is already in use', HttpStatus.CONFLICT);
     }
   }
-  async findAll(options: IPaginationOptions): Promise<Pagination<User>> {
-    return paginate<UserEntity>(this.userRepository, options);
+  async findAll(
+    options: IpaginationRequest,
+  ): Promise<IpaginationResponse<User>> {
+    console.log({ options });
+    const query = this.userRepository.createQueryBuilder('users');
+    return new IpaginationResponse(
+      await this.userRepository.find(),
+      new Meta(
+        await query.getCount(),
+        await query
+          .skip(options.limit * options.page)
+          .take(options.limit)
+          .getCount(),
+        options.limit,
+        Math.ceil((await query.getCount()) / options.limit),
+        options.page,
+      ),
+    );
   }
 
   async login(user: User): Promise<string> {

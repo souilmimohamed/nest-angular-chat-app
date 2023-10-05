@@ -27,12 +27,11 @@ let UserController = class UserController {
         const userEntity = this.userHelperService.createUserDtoToEntity(createUserDto);
         return this.userService.create(userEntity);
     }
-    async findAll(page = 1, limit = 10) {
+    async findAll(page = 0, limit = 10) {
         limit = limit > 100 ? 100 : limit;
         return this.userService.findAll({
             page,
             limit,
-            route: 'localhost:5000/users',
         });
     }
     async login(loginUserDto) {

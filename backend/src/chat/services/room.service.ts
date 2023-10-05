@@ -34,7 +34,6 @@ export class RoomService {
       .where('users.id = :userId', { userId })
       .leftJoinAndSelect('room.users', 'all_users')
       .orderBy('room.updated_at', 'DESC');
-    console.log({ options });
     const meta = new Meta(
       await query.getCount(),
       await query

@@ -22,14 +22,13 @@ export class UserController {
 
   @Get()
   async findAll(
-    @Query('page') page: number = 1,
+    @Query('page') page: number = 0,
     @Query('limit') limit: number = 10,
   ): Promise<Pagination<User>> {
     limit = limit > 100 ? 100 : limit;
     return this.userService.findAll({
       page,
       limit,
-      route: 'localhost:5000/users',
     });
   }
 

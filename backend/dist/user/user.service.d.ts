@@ -1,13 +1,14 @@
 import { UserEntity, User } from './models';
 import { Repository } from 'typeorm';
-import { IPaginationOptions, Pagination } from 'nestjs-typeorm-paginate';
 import { AuthService } from 'src/auth/auth.service';
+import { IpaginationRequest } from 'src/shared/models/IpaginationRequest.model';
+import { IpaginationResponse } from 'src/shared/models/Ipagnation.model';
 export declare class UserService {
     private readonly userRepository;
     private authService;
     constructor(userRepository: Repository<UserEntity>, authService: AuthService);
     create(newUser: User): Promise<User>;
-    findAll(options: IPaginationOptions): Promise<Pagination<User>>;
+    findAll(options: IpaginationRequest): Promise<IpaginationResponse<User>>;
     login(user: User): Promise<string>;
     private emailExist;
     private findOne;

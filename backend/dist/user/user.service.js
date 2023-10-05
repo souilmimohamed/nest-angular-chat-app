@@ -17,8 +17,9 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const models_1 = require("./models");
 const typeorm_2 = require("typeorm");
-const nestjs_typeorm_paginate_1 = require("nestjs-typeorm-paginate");
 const auth_service_1 = require("../auth/auth.service");
+const Ipagnation_model_1 = require("../shared/models/Ipagnation.model");
+const IpaginationMeta_model_1 = require("../shared/models/IpaginationMeta.model");
 let UserService = class UserService {
     constructor(userRepository, authService) {
         this.userRepository = userRepository;
@@ -42,7 +43,12 @@ let UserService = class UserService {
         }
     }
     async findAll(options) {
-        return (0, nestjs_typeorm_paginate_1.paginate)(this.userRepository, options);
+        console.log({ options });
+        const query = this.userRepository.createQueryBuilder('users');
+        return new Ipagnation_model_1.IpaginationResponse(await this.userRepository.find(), new IpaginationMeta_model_1.Meta(await query.getCount(), await query
+            .skip(options.limit * options.page)
+            .take(options.limit)
+            .getCount(), options.limit, Math.ceil((await query.getCount()) / options.limit), options.page));
     }
     async login(user) {
         try {
